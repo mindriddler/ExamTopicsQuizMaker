@@ -41,8 +41,12 @@ class Quiz:
         """
             Initializes the variable that decides if you want the correct answer shown after you respond
         """
-        self.__show_answer_immediately = \
-            input("Do you want to have the answer shown immediately after you respond?\n(If not, you will be shown a score at the end and a file will be generated with the wrong answers anyway.)[Y/n] ")
+        print(
+            "Do you want to have the answer shown immediately after you respond? [Y/n]"
+        )
+        self.__show_answer_immediately = input(
+            "If not, you will be shown a score at the end and a file will be generated with the wrong answers anyway."
+        )
 
         if self.__show_answer_immediately == "":  # if only Enter was pressed
             self.__show_answer_immediately = "y"  # default to y
@@ -92,7 +96,8 @@ class Quiz:
         filename += ".txt"
         filename = os.path.join(self.__log_dirname, filename)
         wrong_answers_file = open(
-            filename, "w")  # file where the wrong answers will be written to
+            filename, "w", encoding="UTF-8"
+        )  # file where the wrong answers will be written to
 
         return wrong_answers_file
 
@@ -129,7 +134,10 @@ class Quiz:
         wrapper = textwrap.TextWrapper()  # wrap text so it looks better
 
         print(
-            "Your quiz starts now. Please enter one single character, coresponding to the answers (A,B,C or D). Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct answer.\n"
+            "Your quiz starts now. Please enter one single character, coresponding to the answers (A,B,C or D)."
+        )
+        print(
+            "Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct answer.\n"
         )
         input("Press Enter to continue..")
 
