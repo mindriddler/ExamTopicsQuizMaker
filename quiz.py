@@ -162,3 +162,6 @@ class Quiz:
         print("The quiz is DONE! Good job!")
         print("Your score: " + str(correct_answers) + "/" +
               str(self.__questions_per_quiz))
+        print("Your percentage: " +
+              str(round(correct_answers / self.__questions_per_quiz *
+                        100, 2)) + "%")
