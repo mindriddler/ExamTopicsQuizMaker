@@ -10,73 +10,86 @@ class Quiz:
 
     def __init__(self, resources_dir=None) -> None:
         self.__cardlist = CardList(resources_dir)
-        self.__log_dirname = "wrong_answers"  # the name of the directory where the .txt files with wrong answers will be stored
-
+        self.__log_dirname = "wrong_answers"
         self.__init_questions_per_quiz()
         self.__init_show_answer_immediately()
-
         self.__create_wrong_answers_directory()
-
         self.quiz_cards = self.__generate_quiz()
 
     def __init_questions_per_quiz(self):
         """
-            Initializez the varialbe that shows how many question should be shown in a quiz run
+        Initialize the variable that shows how many questions should be shown in a quiz run
         """
-
         try:
-            self.__questions_per_quiz = \
-                int(input("How many questions do you want to have? (Max: " + str(len(self.__cardlist.cards_list)) + ") "))
-
-            while type(self.__questions_per_quiz
-                       ) != int or self.__questions_per_quiz > len(
-                           self.__cardlist.cards_list):
-                self.__questions_per_quiz = \
-                    int(input("Please pick a NUMBER. (Max: " + str(len(self.__cardlist.cards_list)) + ")"))
-        except:
+            self.__questions_per_quiz = int(
+                input("How many questions do you want to have? (Max: " +
+                      str(len(self.__cardlist.cards_list)) + ") "))
+            while self.__questions_per_quiz > len(self.__cardlist.cards_list):
+                self.__questions_per_quiz = int(
+                    input("Please pick a NUMBER. (Max: " +
+                          str(len(self.__cardlist.cards_list)) + ")"))
+        except ValueError:
             print("Defaulted to max number of questions.")
             self.__questions_per_quiz = len(self.__cardlist.cards_list)
 
+        use_specific_range = (input(
+            "Do you want the questions to be from a specific range [y/N]? ").
+                              lower() == "y")
+        if use_specific_range:
+            self.__range_selection = input(
+                f"""Do you want the {self.__questions_per_quiz} questions to be from the 
+[1] beginning
+[2] end
+Please select 1 or 2: """)
+        else:
+            self.__range_selection = None
+
     def __init_show_answer_immediately(self):
         """
-            Initializes the variable that decides if you want the correct answer shown after you respond
+        Initializes the variable that decides if you want the correct answer shown after you respond
         """
-        print(
-            "Do you want to have the answer shown immediately after you respond? [Y/n]"
-        )
         self.__show_answer_immediately = input(
-            "If not, you will be shown a score at the end and a file will be generated with the wrong answers anyway."
+            """Do you want to have the answer shown immediately after you respond?
+(If not, you will be shown a score at the end and a file will be generated with the wrong answers anyway.)[Y/n]"""
         )
 
-        if self.__show_answer_immediately == "":  # if only Enter was pressed
-            self.__show_answer_immediately = "y"  # default to y
+        if self.__show_answer_immediately == "":
+            self.__show_answer_immediately = "y"
 
         self.__show_answer_immediately = self.__show_answer_immediately.lower()
-        while self.__show_answer_immediately != "n" and self.__show_answer_immediately != "y":
-            self.__show_answer_immediately = \
-                input("Please pick between 'y'(yes) or 'n'(no): ")
+        while (self.__show_answer_immediately != "n" and
+               self.__show_answer_immediately != "y"):
+            self.__show_answer_immediately = input(
+                "Please pick between 'y'(yes) or 'n'(no): ")
             self.__show_answer_immediately = self.__show_answer_immediately.lower(
             )
 
     def __generate_quiz(self) -> list:
         """
-            Generate a random list of card objects that are limited by the size of how
-            many questions the player wants to have
+        Generate a random list of card objects that are limited by the size of how
+        many questions the player wants to have
         """
-        random.shuffle(self.__cardlist.cards_list)
-        return self.__cardlist.cards_list[:self.__questions_per_quiz]
+        if self.__range_selection == "1":
+            selected_cards = self.__cardlist.cards_list[:self.
+                                                        __questions_per_quiz]
+        elif self.__range_selection == "2":
+            selected_cards = self.__cardlist.cards_list[-self.
+                                                        __questions_per_quiz:]
+        else:
+            selected_cards = self.__cardlist.cards_list
+
+        random.shuffle(selected_cards)
+        return selected_cards[:self.__questions_per_quiz]
 
     def __clear(self):
         """
-            Clear the terminal window
+        Clear the terminal window
         """
-        print("")  # get a new empty line
-        # for windows
-        if os.name == 'nt':
-            _ = os.system('cls')
-        # for mac and linux(here, os.name is 'posix')
+        print("")
+        if os.name == "nt":
+            _ = os.system("cls")
         else:
-            _ = os.system('clear')
+            _ = os.system("clear")
 
     def __create_wrong_answers_directory(self):
         try:
@@ -86,7 +99,7 @@ class Quiz:
 
     def __init_answers_file(self) -> TextIOWrapper:
         """
-            Initialize the filename with the current datetime, while omitting spaces and colon
+        Initialize the filename with the current datetime, while omitting spaces and colon
         """
         filename = re.sub(" ", "_", str(datetime.now())).split(".")[
             0]  # remove the miliseconds as they were delimited by '.'
@@ -96,13 +109,12 @@ class Quiz:
         filename += ".txt"
         filename = os.path.join(self.__log_dirname, filename)
         wrong_answers_file = open(
-            filename, "w", encoding="UTF-8"
-        )  # file where the wrong answers will be written to
+            filename, "w",
+            encoding="UTF-8")  # file where the wrong answers will be written to
 
         return wrong_answers_file
 
     def __write_to_file(self, wrong_answers_file, card, your_answer):
-
         wrapper = textwrap.TextWrapper()  # wrap text so it looks better
 
         wrong_answers_file.write(card.question_number + " " +
@@ -123,8 +135,8 @@ class Quiz:
         wrong_answers_file.write("-" * 40 + "\n\n")
 
     def start_quiz(self):
-        """ 
-            The main logic function for the quiz to run
+        """
+        The main logic function for the quiz to run
         """
         self.__clear()
 
@@ -134,24 +146,21 @@ class Quiz:
         wrapper = textwrap.TextWrapper()  # wrap text so it looks better
 
         print(
-            "Your quiz starts now. Please enter one single character, coresponding to the answers (A,B,C or D)."
-        )
-        print(
-            "Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct answer.\n"
+            """Your quiz starts now. Please enter one single character, coresponding to the answers (A,B,C or D).
+Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct answer."""
         )
         input("Press Enter to continue..")
 
         for index, card in enumerate(self.quiz_cards):
             print("")
             print(str(index + 1) + "/" + str(self.__questions_per_quiz))
-            print(card.question_number + " " +
-                  wrapper.fill(text=card.question))
+            print(card.question_number + " " + wrapper.fill(text=card.question))
             print("-" * 40)
             for ans in card.answers:
                 print(wrapper.fill(text=ans))
             print("-" * 40)
             your_answer = ""
-            while your_answer.upper() not in ['A', 'B', 'C', 'D']:
+            while your_answer.upper() not in ["A", "B", "C", "D"]:
                 your_answer = input("Your answer: ")
 
             if your_answer.upper() == card.correct_answer:
@@ -162,6 +171,8 @@ class Quiz:
 
             if self.__show_answer_immediately == "y":
                 print("Correct answer: ", card.correct_answer)
+                print("Your percentage: " +
+                      str(round(correct_answers / (index + 1) * 100, 2)) + "%")
                 input("Press Enter to continue..")
 
         wrong_answers_file.close()  # writing is done so we close the file
@@ -171,5 +182,5 @@ class Quiz:
         print("Your score: " + str(correct_answers) + "/" +
               str(self.__questions_per_quiz))
         print("Your percentage: " +
-              str(round(correct_answers / self.__questions_per_quiz *
-                        100, 2)) + "%")
+              str(round(correct_answers / self.__questions_per_quiz * 100, 2)) +
+              "%")
