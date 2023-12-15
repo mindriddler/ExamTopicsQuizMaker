@@ -78,7 +78,16 @@ Please select 1 or 2: """)
         else:
             selected_cards = self.__cardlist.cards_list
 
-        random.shuffle(selected_cards)
+        shuffle = input(
+            "Do you want the questions to be shuffled? [Y/n] ").lower()
+
+        if shuffle == "":
+            shuffle = "y"
+
+        if shuffle == "y":
+            random.shuffle(selected_cards)
+            return selected_cards[:self.__questions_per_quiz]
+        selected_cards = selected_cards[:self.__questions_per_quiz]
         return selected_cards[:self.__questions_per_quiz]
 
     def __clear(self):
