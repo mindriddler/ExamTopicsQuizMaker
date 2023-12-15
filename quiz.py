@@ -155,9 +155,8 @@ Please select 1 or 2: """)
         wrapper = textwrap.TextWrapper()  # wrap text so it looks better
 
         print(
-            """Your quiz starts now. Please enter one single character, coresponding to the answers (A,B,C or D).
-Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct answer."""
-        )
+            """Your quiz starts now. Please enter the characters corresponding to the answers (e.g., 'AB', 'C', 'DE').
+    Answers are NOT case sensitive.""")
         input("Press Enter to continue..")
 
         for index, card in enumerate(self.quiz_cards):
@@ -168,11 +167,12 @@ Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct an
             for ans in card.answers:
                 print(wrapper.fill(text=ans))
             print("-" * 40)
-            your_answer = ""
-            while your_answer.upper() not in ["A", "B", "C", "D"]:
-                your_answer = input("Your answer: ")
+            your_answer = input("Your answer: ").upper()
 
-            if your_answer.upper() == card.correct_answer:
+            correct_answer_set = set(card.correct_answer.upper())
+            your_answer_set = set(your_answer)
+
+            if your_answer_set == correct_answer_set:
                 correct_answers += 1
             else:
                 # write to the wrong answer to the file
@@ -183,6 +183,7 @@ Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct an
                 print("Your percentage: " +
                       str(round(correct_answers / (index + 1) * 100, 2)) + "%")
                 input("Press Enter to continue..")
+                self.clear()
 
         wrong_answers_file.close()  # writing is done so we close the file
 
@@ -193,3 +194,13 @@ Answers are NOT case sensitive, so response 'b' is good if 'B' is the correct an
         print("Your percentage: " +
               str(round(correct_answers / self.__questions_per_quiz * 100, 2)) +
               "%")
+
+    def clear(self):
+        """
+        Clear the terminal window
+        """
+        print("")
+        if os.name == "nt":
+            _ = os.system("cls")
+        else:
+            _ = os.system("clear")
