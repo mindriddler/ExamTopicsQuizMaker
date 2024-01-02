@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import textwrap
 from datetime import datetime
 from io import TextIOWrapper
 
@@ -88,7 +89,9 @@ class Quiz:
         return wrong_answers_file
 
     def __write_to_file(self, wrong_answers_file, card, your_answer):
-        wrong_answers_file.write(card.question_number + " " + card.question + "\n")
+        wrapper = textwrap.TextWrapper()
+
+        wrong_answers_file.write(card.question_number + " " + wrapper.fill(text=card.question) + "\n")
         wrong_answers_file.write("-" * 40 + "\n")
         for ans in card.answers:
             try:
@@ -103,6 +106,7 @@ class Quiz:
         self.__clear()
         correct_answers = 0
         wrong_answers_file = self.__init_answers_file()
+        wrapper = textwrap.TextWrapper()
 
         print(
             "Your quiz starts now. Please enter the characters corresponding to the answers (e.g., 'AB', 'C', 'DE'). Answers are NOT case sensitive."
@@ -112,10 +116,10 @@ class Quiz:
         for index, card in enumerate(self.quiz_cards):
             print("")
             print(str(index + 1) + "/" + str(self.__questions_per_quiz))
-            print(card.question_number + " " + card.question)
+            print(card.question_number + " " + wrapper.fill(text=card.question))
             print("-" * 40)
             for ans in card.answers:
-                print(ans)
+                print(wrapper.fill(text=ans))
             print("-" * 40)
             your_answer = input("Your answer: ").upper()
 
