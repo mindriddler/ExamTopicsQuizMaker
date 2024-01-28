@@ -10,13 +10,14 @@ from _classes import CardList
 
 class Quiz:
 
-    def __init__(self, resources_dir=None) -> None:
+    def __init__(self, exam_name, resources_dir=None) -> None:
         self.__cardlist = CardList(resources_dir)
         self.__log_dirname = "wrong_answers"
         self.__init_questions_per_quiz()
         self.__init_show_answer_immediately()
         self.__create_wrong_answers_directory()
         self.quiz_cards = self.__generate_quiz()
+        self.exam_name = exam_name
 
     def __init_questions_per_quiz(self):
         try:
@@ -84,6 +85,7 @@ class Quiz:
         filename = re.sub(" ", "_", str(datetime.now())).split(".")[0]
         filename = re.sub(":", "-", filename)
         filename += ".txt"
+        filename = self.exam_name + "_" + filename
         filename = os.path.join(self.__log_dirname, filename)
         wrong_answers_file = open(filename, "w", encoding="UTF-8")
         return wrong_answers_file

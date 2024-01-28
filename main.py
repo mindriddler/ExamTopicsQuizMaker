@@ -9,19 +9,13 @@ EXAM_DIR = "./exams"  # Directory of exams
 
 def read_exam(exam_dir):
     """Reads exam directories from the exam directory and returns them as a list."""
-    return [
-        exam for exam in os.listdir(exam_dir)
-        if os.path.isdir(os.path.join(exam_dir, exam))
-    ]
+    return [exam for exam in os.listdir(exam_dir) if os.path.isdir(os.path.join(exam_dir, exam))]
 
 
 def choose_exam(exam_dir, res_dir):
     """Choose the exam to be read."""
     if os.path.exists(res_dir):
-        current_exams = [
-            item for item in os.listdir(res_dir)
-            if os.path.isdir(os.path.join(res_dir, item))
-        ]
+        current_exams = [item for item in os.listdir(res_dir) if os.path.isdir(os.path.join(res_dir, item))]
         if current_exams:
             print("Your current exam(s):")
             for exam in current_exams:
@@ -29,14 +23,12 @@ def choose_exam(exam_dir, res_dir):
         else:
             print("No current exams found in the resource directory.")
 
-        if input("Do you want to delete the current exam? [Y/n] ").lower(
-        ) != 'n':
+        if input("Do you want to delete the current exam? [Y/n] ").lower() != 'n':
             shutil.rmtree(res_dir)
             print("Deleted the current exam. Please choose a new one.")
         else:
             print("Keeping the current exam.")
-            return next((item for item in os.listdir(res_dir)
-                         if os.path.isdir(os.path.join(res_dir, item))), None)
+            return next((item for item in os.listdir(res_dir) if os.path.isdir(os.path.join(res_dir, item))), None)
 
     exams = read_exam(exam_dir)
     if not exams:
@@ -49,8 +41,7 @@ def choose_exam(exam_dir, res_dir):
 
     while True:
         try:
-            exam_choice = int(
-                input("Enter the number of the exam you want to take: ")) - 1
+            exam_choice = int(input("Enter the number of the exam you want to take: ")) - 1
             if 0 <= exam_choice < len(exams):
                 return exams[exam_choice]
             print("Invalid number, please try again.")
@@ -83,7 +74,7 @@ if __name__ == "__main__":
         current_exams = os.listdir(RES_DIR)
         if chosen_exam not in current_exams:
             copy_exam(EXAM_DIR, chosen_exam, RES_DIR)
-        quiz = Quiz(RES_DIR)
+        quiz = Quiz(str(chosen_exam), RES_DIR)
         quiz.start_quiz()
     else:
         print("No exam selected. Exiting.")
